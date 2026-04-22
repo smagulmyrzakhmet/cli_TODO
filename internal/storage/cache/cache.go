@@ -6,18 +6,18 @@ import (
 	"github.com/smagulmyrzakhmet/cli_TODO/internal/models"
 )
 
-type CacheRepositoryImpl struct {
+type RepositoryImpl struct {
 	data        map[uint]models.Task
 	idGenerator atomic.Uint64
 }
 
-func NewCacheRepositoryImpl() *CacheRepositoryImpl {
+func NewRepositoryImpl() *RepositoryImpl {
 	data := map[uint]models.Task{}
 	idGenerator := atomic.Uint64{}
-	return &CacheRepositoryImpl{data, idGenerator}
+	return &RepositoryImpl{data, idGenerator}
 }
 
-func (s *CacheRepositoryImpl) Add(taskCreate models.TaskCreate) (models.Task, error) {
+func (s *RepositoryImpl) Add(taskCreate models.TaskCreate) (models.Task, error) {
 	id := uint(s.idGenerator.Add(1))
 	task := models.Task{
 		Id:          id,
@@ -30,7 +30,7 @@ func (s *CacheRepositoryImpl) Add(taskCreate models.TaskCreate) (models.Task, er
 	return task, nil
 }
 
-func (s *CacheRepositoryImpl) Update(id uint, taskUpdate models.TaskUpdate) error {
+func (s *RepositoryImpl) Update(id uint, taskUpdate models.TaskUpdate) error {
 	task, ok := s.data[id]
 	if !ok {
 		return models.TaskNotFoundError
@@ -41,7 +41,7 @@ func (s *CacheRepositoryImpl) Update(id uint, taskUpdate models.TaskUpdate) erro
 	return nil
 }
 
-func (s *CacheRepositoryImpl) Delete(id uint) error {
+func (s *RepositoryImpl) Delete(id uint) error {
 	_, ok := s.data[id]
 	if !ok {
 		return models.TaskNotFoundError
@@ -50,7 +50,7 @@ func (s *CacheRepositoryImpl) Delete(id uint) error {
 	return nil
 }
 
-func (s *CacheRepositoryImpl) Get(id uint) (models.Task, error) {
+func (s *RepositoryImpl) Get(id uint) (models.Task, error) {
 	task, ok := s.data[id]
 	if !ok {
 		return models.Task{}, models.TaskNotFoundError
@@ -58,7 +58,7 @@ func (s *CacheRepositoryImpl) Get(id uint) (models.Task, error) {
 	return task, nil
 }
 
-func (s *CacheRepositoryImpl) GetAll() ([]models.Task, error) {
+func (s *RepositoryImpl) GetList() ([]models.Task, error) {
 	if len(s.data) == 0 {
 		return nil, models.TaskNotFoundError
 	}
@@ -69,7 +69,7 @@ func (s *CacheRepositoryImpl) GetAll() ([]models.Task, error) {
 	return tasks, nil
 }
 
-func (s *CacheRepositoryImpl) GetListByStatus(status models.Status) ([]models.Task, error) {
+func (s *RepositoryImpl) GetListByStatus(status models.Status) ([]models.Task, error) {
 	if len(s.data) == 0 {
 		return nil, models.TaskNotFoundError
 	}
@@ -85,7 +85,7 @@ func (s *CacheRepositoryImpl) GetListByStatus(status models.Status) ([]models.Ta
 	return tasks, nil
 }
 
-func (s *CacheRepositoryImpl) ChangeStatus(id uint, status models.Status) error {
+func (s *RepositoryImpl) ChangeStatus(id uint, status models.Status) error {
 	task, ok := s.data[id]
 	if !ok {
 		return models.TaskNotFoundError

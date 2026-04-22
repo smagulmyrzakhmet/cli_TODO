@@ -36,3 +36,7 @@ func (s *CLIServiceImpl) GetListByStatus(status models.Status) ([]models.Task, e
 func (s *CLIServiceImpl) ChangeStatus(id uint, status models.Status) error {
 	return s.repo.ChangeStatus(id, status)
 }
+
+func NewCLIServiceImpl(repo storage.Repository) *CLIServiceImpl {
+	return &CLIServiceImpl{repo: repo}
+}
